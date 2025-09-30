@@ -1,0 +1,93 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "mysql" // or "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model SuperAdmin {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model Hospital {
+  id            Int      @id @default(autoincrement())
+  hospitalId    String   @unique 
+  name          String
+  email         String   @unique
+  address       String
+  approval_note String?
+  phone         String
+  password      String
+  approved      Boolean  @default(false) // super admin approves
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  patients     Patient[]
+  visits       Visit[]
+
+}
+
+model Patient {
+  id         Int      @id @default(autoincrement())
+  patientId  String   @unique 
+  name       String
+  address    String
+  dateOfBirth DateTime
+  bloodGroup String
+  underlyingSickness String
+  gender     String
+  phone      String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  hospital   Hospital @relation(fields: [hospitalId], references: [id])
+  hospitalId Int
+
+  visits     Visit[]
+}
+
+model Visit {
+  id              Int       @id @default(autoincrement())
+  visitDate       DateTime  @default(now())
+  bloodPressure   String?
+  weight          Float?
+  temperature     Float?
+  heartRate       Int?
+  respirationRate Int?
+  symptoms        String?
+  diagnosis       String?
+  notes           String?
+
+  // relations
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  patientId   Int
+  hospital    Hospital @relation(fields: [hospitalId], references: [id])
+  hospitalId  Int
+
+  prescriptions Prescription[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Prescription {
+  id           Int      @id @default(autoincrement())
+  drugName     String
+  dosage       String?
+  frequency    String?
+  duration     String?
+  instructions String?
+  prescribedBy String?
+
+  visit    Visit @relation(fields: [visitId], references: [id])
+  visitId  Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
