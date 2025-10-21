@@ -17,24 +17,23 @@ app.use('/api/superadmin', superAdminRoutes)
 // hospital routes entry point
 app.use('/api/hospital', HospitalRoutes)
 
-
 // Start server
 const PORT = process.env.PORT || 5000;
 
 // Initialize database and start server
 const startServer = async () => {
-  console.log('🚀 Starting HealthNet Backend...');
+  console.log('Starting HealthNet Backend...');
   
   // Test database connection before starting server
   await initializeDatabase();
   
   app.listen(PORT, () => {
-    console.log(`✅ Server running on http://localhost:${PORT}`);
-    console.log('🏥 HealthNet Backend is ready!');
+    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(' HealthNet Backend is ready!');
   });
 };
 
 startServer().catch(error => {
-  console.error('❌ Failed to start server:', error);
+  console.error(' Failed to start server:', error);
   process.exit(1);
 });
